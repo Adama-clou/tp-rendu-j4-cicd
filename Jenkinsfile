@@ -20,8 +20,8 @@ pipeline {
             steps {
                 dir('app') {
                     sh '''
-                        pip install --break-system-packages -q flask pytest
-                        pytest test_app.py -v
+                        pip3 install --break-system-packages -q flask pytest
+                        python3 -m pytest test_app.py -v
                     '''
                 }
             }
