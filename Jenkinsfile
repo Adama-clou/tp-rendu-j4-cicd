@@ -5,6 +5,7 @@ pipeline {
         ANSIBLE_HOST_KEY_CHECKING = 'False'
         ANSIBLE_FORCE_COLOR        = 'true'
         APP_VERSION                = "1.${BUILD_NUMBER}.0"
+        PROJECT_DIR                = "/home/adama/Formations/B3-Jenkins-Ansible/tp-rendu-j4-cicd"
     }
 
     stages {
@@ -40,20 +41,17 @@ pipeline {
 
         stage('4. Lint Ansible') {
             steps {
-                dir('ansible') {
-                    sh 'ansible-playbook site.yml --syntax-check'
-                }
+                sh "cd ${PROJECT_DIR}/ansible && ansible-playbook site.yml --syntax-check"
             }
         }
 
         stage('5. Deploy Rolling') {
             steps {
-                dir('ansible') {
-                    sh """
-                        ansible-playbook -i inventory.ini site.yml \
-                          -e "app_version=${APP_VERSION}"
-                    """
-                }
+                sh """
+                    cp artifact/app.tar.gz ${PROJECT_DIR}/artifact/app.tar.gz
+                    cd ${PROJECT_DIR}/ansible
+                    ansible-playbook -i inventory.ini site.yml -e "app_version=${APP_VERSION}"
+                """
             }
         }
 
